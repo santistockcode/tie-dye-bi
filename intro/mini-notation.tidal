@@ -1,0 +1,91 @@
+-- MINI NOTATION
+-- corchetes para agrupar
+d1 $ s "bd [~ hh]" -- dividir el compás y permitir subdivisión
+d1 $ s "bd . ~ hh" -- resulta igual
+d1 $ s "[bd sd, hh hh hh]" -- multiple patterns
+d1 $ s "[bd |cp |hh] . [~ hh]" -- random choice
+d1 $ s "bd sd . hh hh hh" -- Abreviatura de []
+d1 $ s "[bd sd] [hh*3]" -- es equivalente a 
+-- barra 7 oblicua, step division
+
+d1 
+$ s "bd sn cp hh/2" -- hh solo suena uno de cada dos repeticiones
+# n "0 1 2 3"
+
+d1 $ s "bd [sn cp/2] hh*2" --cp solo suena una de cada dos ciclos
+
+d1 
+$ fast 8 $ s "[bd:2/5 bd:5/8 bd:6/13 bd:4/21]" -- very small subdivisions
+# speed 8
+
+d1
+$ s "wind(7, 8)" 
+# n "[1 5 8]/4" -- si son 3 notas entre 4 ciclos pues lo divide acorde
+# speed (irand 3)
+-- Ramdonness
+-- Barra vertical, random choice
+d1 $ s "[bd | hh | cp]"
+d1 $ s "[bd*4|hh*12|cp*2]"
+-- Interrogación, elimina este sonido al azar con probabilidad de 0.5 (pero random)
+d1 $ s "bd hh? bd cp?0.9"
+d1 $ sound "bd? sd? sd? sd?"
+d1 $ sound "bd*16?" -- daria igual con !
+d1 $ sound "bd sn? cp hh?"
+d1 $ sound "[bd sn cp hh]?" -- sigue tratandolo como pasos independientes
+-- Degrade, se abrevia con ?, estas dos son lo mismo:
+d1 $ sound "bd*16?"
+d1 $ degrade $ sound "bd*16" 
+-- DegradeBy permite especificar entre 0 1 cuanto quitar de un pattern
+d1 $ degradeBy 0.90 $ sound "bd*16"
+d1 $ degradeBy 0.15 $ sound "bd*16"
+-- RAND valores de 0 a 1
+d1 $ sound "arpy*4" # pan (rand)
+d1 $ sound "arpy*4" # pan (range 0.25 0.75 $ rand) --cp solo suena una de cada dos ciclos 
+-- IRAND valores enteros
+d1 $ s "arpy*4" # n (irand 30)
+d2 $ s "arpy*4" # n (irand 30) 
+{- 
+As with all patterns they are also deterministic, stateless functions of time, 
+so that if you retriggered a pattern from the same logical time point, 
+exactly the same numbers would be produced.
+-}
+-- por esto d1 y d2 suenan igual en el ejemplo anterior
+-- SOMETIMESBY: se aplica a funciones, ejemplo:
+d1 
+$ sometimesBy 0.75 (# crush 4) -- aplica crush con prob del 0.75 
+$ sound "bd arpy sn ~"  
+{- 
+tabla de equivalencias: 
+        sometimes = sometimesBy 0.5
+        often = sometimesBy 0.75
+        rarely = sometimesBy 0.25
+        almostNever = sometimesBy 0.1
+        almostAlways = sometimesBy 0.9
+-}
+-- STUT sería algo así como entrecortado
+d2 $ stut 4 0.2 0.12 $ s "cp(3,8)"
+
+d1 
+$ stut 5 0.5 0.9 --admite tres parámetros x y z
+$ s "bd(3, 5)"
+
+{-
+x: número de repeticiones a posteriori de cada sambple
+y: el gain de esos especie de delay
+z: la distancia al sonido original del delay
+(0 es lo más cercano al sonido y 1 es un ciclo completo)
+-}
+-- stut prima, el tercer parámetro admite una función
+
+d1 
+$ stut' 3 0.2 (|*| speed "2")
+$ s "~!2 bd _ _ bd _ _ bd _ _ bd _ _ bd bd"
+
+-- off (como stut con 1 en el primer valor, pero admite admeás una función en el segundo parámetro)
+d1 
+$ off 0.75 (|-| up "[<6 <4 8> 5 9>]/2")
+$ s "[if _ _ _ ul _ ul ul:6 _ ul _ ul _ ul:3]"
+# pan (sine + (rand))
+
+
+

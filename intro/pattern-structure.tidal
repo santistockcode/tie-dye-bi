@@ -1,0 +1,72 @@
+d1 $ sound "bd sn" -- A simple pattern with bass drum and snare
+d1 $ sound "bd sn" + sound "hh" -- Combining two patterns
+d1 $ slow 2 $ sound "bd sn" -- Slowing down the pattern
+d1 $ fast 2 $ sound "bd sn" -- Speeding up the pattern
+d1 $ rev $ sound "bd sn" -- Reversing the pattern
+d1 $ striate 4 $ sound "bd sn" -- Slicing the pattern into smaller parts
+d1 $ every 3 (rev) $ sound "bd sn" -- Reversing the pattern every 3 cycles
+d1 $ sometimes (fast 2) $ sound "bd sn" -- Sometimes speeding up the pattern
+
+d1 $ qtrigger $ seqP [
+    (0, 2, sound "bd*4"), 
+    (2, 12, sound "cp*4"), 
+    (4, 5, sound "sn*4")
+    ] -- Sequencing different sounds (sn will go from cycle 4 to 5)
+-- (qtrigger es necesario a no ser que justo acabes de iniciar tidal, entonces si estás en el ciclo 0, 2 o 4)
+
+d1 $ loopAt 1 $ sound "breaks125" -- Looping a pattern
+d1 $ loopAt 4 $ sound "breaks125" -- Looping a pattern
+d1 $ stack [sound "cp", sound "sn"] -- Stacking patterns
+d1 $ choose ["bd", "sn", "hh"] -- Randomly choosing between sounds
+d1 $ shuffle $ sound "bd sn hh" -- Shuffling the pattern can go sn hh bd, but not sn bd hh
+d1 $ randcat ["bd", "sn", "hh"] -- Randomly concatenating sounds
+d1 $ sound "bd sn" # speed 2 -- Controlling the speed
+d1 $ sound "bd sn" # gain 1.5 -- Controlling the gain
+d1 $ sound "wind sn" # sustain 0.125 -- Controlling the sustain
+d1 $ stack [sound "bd", sound "sn"] -- Combining patterns into a stack
+d1 $ cat [sound "bd", sound "sn", sound "hh"] -- Concatenating patterns
+d1 $ sound "can*4" # n "0 1 2 3" -- Controlling pitch
+d1 $ sound "wind*4" # sustain "0.9 0.2 1 1.5" -- Controlling duration
+d1 $ sound "chin*8" # gain "1.6 0.5 0.75 8" -- Controlling gain
+
+
+-- $ apply a function to a pattern
+d1 $ sound "bd sn" -- Applies the sound function to the pattern "bd sn"
+d1 $ slow 2 $ sound "bd sn" -- Applies slow 2 to the result of sound "bd sn"
+
+-- combine operator
+d1 $ sound "bd sn" # speed 2 -- Sets the speed of the pattern to 2
+d1 $ sound "bd sn" # gain 1.5 -- Sets the gain of the pattern to 1.5
+
+-- The |*| operator applies a control pattern to another pattern uniformly over its entire duration.
+d1 $ sound "bd sn" |*| speed "1 2 1 0.5" -- Applies varying speed to the pattern
+
+-- Using $
+d1 $ slow 2 $ sound "bd sn" -- Slows down the pattern
+
+-- Using #
+d1 $ sound "bd sn" # speed 2 -- Sets the speed of the pattern
+
+-- Using |*|
+d1 $ sound "bd sn" |*| speed "1 2 1 0.5"-- Applies varying speed
+
+-- Using |*
+d1 $ sound "bd sn" |* speed 2 -- Applies speed more to the beginning
+
+-- Using *|
+d1 $ sound "bd sn" *| speed 2 -- Applies speed more to the end
+
+-- Using +
+d1 $ sound "bd" + sound "sn" -- Adds two patterns
+
+-- Using |+|
+d1 $ sound "bd sn" |+| speed "1 2 1 0.5" -- Adds varying speed
+
+-- Using |+
+d1 $ sound "bd sn" |+ speed 2 -- Adds speed more to the beginning
+
+d1 $ sound "drum" |+| n "2 3" |+| n "4 5 6"
+-- equivalent to this (sinc is like superposing |+ and +|)
+d1 $ sound "drum" |+| n "6 [7 8] 9"
+
+hush
